@@ -1,25 +1,45 @@
 const express = require("express")
 const mongoose = require("mongoose")
-const cors = require("cors")
+const bodyParser = require('body-parser');
 const InputModel = require("./model.js")
 
-const PORT=3001;
-
+const port = process.env.PORT || 3000;
 const app=express()
-app.use(express.json())
-app.use(cors())
 
-mongoose.connect("mongodb://127.0.0.1:27017/input");
+//Connect to MongoDB
+mongoose.connect('mongodb://127.0.0.1:27017/input',{ useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+  });
 
-app.post('./index.html',(req,res)=>{
-    InputModel.create(req.body)
-    console.log(req.body)
-    .then(input=>res.json(input))
-    .catch(err=>res.json(err))
+  // Middleware to parse JSON data
+app.use(bodyParser.json());
 
+// Serve static files (e.g., your HTML file)
+app.use(express.static('public'));
 
-})
+// Handle form submission
+app.post('/submit', (req, res) => {
+    const data = req.body;
+  
+    // Create a new document and save it to MongoDB
+    const newData = new InputModel({
+      text: data.text,
+    });
+    newData.save()
+    .then(() => {
+      console.log('Data saved to MongoDB:', newData);
+      res.send('Data saved successfully.');
+    })
+    .catch((err) => {
+      console.error('Error saving data to MongoDB:', err);
+      res.status(500).send('Error saving data.');
+    });
+});
 
-app.listen(PORT,()=>{
-    console.log(`server is running at ${PORT}`)
+app.listen(port,()=>{
+    console.log(`server is running at ${port}`)
 })

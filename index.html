@@ -1,14 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <title>Express MongoDB Form</title>
 </head>
 <body>
-    <form action="submit">
-    <input type="text">
-    <button>ok</button>
-    </form>
+  <h1>Submit Data to MongoDB</h1>
+  <form id="myForm">
+    <label for="text">Text:</label>
+    <input type="text" id="text" name="text" required>
+    <button type="submit">Submit</button>
+  </form>
+  <p id="message"></p>
+
+  <script>
+    document.getElementById('myForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const text = document.getElementById('text').value;
+
+      try {
+        const response = await fetch('/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text }),
+        });
+
+        if (response.ok) {
+          document.getElementById('message').textContent = 'Data saved successfully.';
+        } else {
+          document.getElementById('message').textContent = 'Error saving data.';
+          console.log(response);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
 </body>
 </html>

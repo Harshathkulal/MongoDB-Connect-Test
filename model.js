@@ -1,7 +1,7 @@
 const mongoose=require("mongoose");
 
 const InputSchema = new mongoose.Schema({
-    name:String,
+    text:String,
 })
 
 const InputModel = mongoose.model("input",InputSchema)
