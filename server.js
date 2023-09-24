@@ -1,7 +1,7 @@
-const express = require("express")
-const mongoose = require("mongoose")
+const express = require("express");
+const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
-const InputModel = require("./model.js")
+const InputModel = require("./model.js");
 
 const port = process.env.PORT || 3000;
 const app=express()
@@ -19,16 +19,18 @@ mongoose.connect('mongodb://127.0.0.1:27017/input',{ useNewUrlParser: true, useU
 app.use(bodyParser.json());
 
 // Serve static files (e.g., your HTML file)
-app.use(express.static('public'));
+app.use(express.static('index.html'));
 
 // Handle form submission
 app.post('/submit', (req, res) => {
     const data = req.body;
+    console.log(data);
   
     // Create a new document and save it to MongoDB
     const newData = new InputModel({
       text: data.text,
     });
+
     newData.save()
     .then(() => {
       console.log('Data saved to MongoDB:', newData);
@@ -36,7 +38,7 @@ app.post('/submit', (req, res) => {
     })
     .catch((err) => {
       console.error('Error saving data to MongoDB:', err);
-      res.status(500).send('Error saving data.');
+      res.status(500).send('Error saving data.qq');
     });
 });
 
